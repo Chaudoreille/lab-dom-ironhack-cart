@@ -1,14 +1,20 @@
+function formatPrice(price) {
+  const splitPrice = String(price).split(".")
+  const dollars = !splitPrice[0] ? "0" : String(Number(splitPrice[0]))
+  const cents = splitPrice[1] === undefined ? "00" :  (splitPrice[1] + "00").slice(0,2)
+
+
+  return `${dollars}.${cents}`;
+}
+
 // ITERATION 1
 
 function updateSubtotal(product) {
   const price = product.querySelector('.price span').innerText
   const quantity = product.querySelector('.quantity input').value
   let totalPrice = price * quantity
-  const splitPrice = String(totalPrice).split(".")
 
-  totalPrice = splitPrice[1] === undefined ? splitPrice[0] : `${splitPrice[0]}.${splitPrice[1].slice(0,2)}`
-  totalPrice = Number(totalPrice)
-
+  totalPrice = Number(formatPrice(totalPrice))
   product.querySelector('.subtotal span').innerText = totalPrice
   return totalPrice
 }
@@ -41,18 +47,47 @@ function removeProduct(event) {
 
   //... your code goes here
   const product = target.closest("tr.product");
-  product.parentNode.removeChild(product)
+  product.remove()
   calculateAll()
 }
 
 document.querySelectorAll('.product .btn-remove').forEach((removeBtn) => {
-  removeBtn.addEventListener("click", (event) => removeProduct)
+  removeBtn.addEventListener("click", removeProduct)
 })
 
 // ITERATION 5
 
 function createProduct() {
-  //... your code goes here
+  const nameInput = document.querySelector('.create-product input[type="text"]')
+  const priceInput = document.querySelector('.create-product input[type="number"]')
+  const productName = nameInput.value
+  const productPrice = priceInput.value
+  let validation = true
+
+  if (!productName.length) {
+    nameInput.style.borderColor = "red";
+    validation = false
+  } else {
+    nameInput.style.borderColor = "black";
+  }
+  if (productPrice <= 0) {
+    priceInput.style.borderColor = "red";
+    validation = false;
+  } else {
+    priceInput.style.borderColor = "black";
+  }
+
+  if (!validation) return
+
+  const rowTemplate = document.querySelector("#product-row")
+  const newRow = rowTemplate.content.cloneNode(true)
+  newRow.querySelector(".name span").textContent = productName
+  newRow.querySelector(".price span").textContent = formatPrice(productPrice)
+  newRow.querySelector(".btn-remove").addEventListener("click", removeProduct)
+  document.querySelector("table#cart > tbody").appendChild(newRow)
+
+  nameInput.value = ""
+  priceInput.value = 0
 }
 
 window.addEventListener('load', () => {
@@ -60,4 +95,5 @@ window.addEventListener('load', () => {
   calculatePricesBtn.addEventListener('click', calculateAll);
 
   //... your code goes here
+  document.querySelector("#create").addEventListener("click", createProduct)
 });
