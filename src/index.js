@@ -18,14 +18,16 @@ function calculateAll() {
 
   // ITERATION 2
   //... your code goes here
-  const multipleProducts = document.querySelectorAll('table#cart tr.product');
+  const multipleProducts = document.querySelectorAll('table#cart tr.product')
   let totalPrice = 0
+
   multipleProducts.forEach((product) => {
     totalPrice += updateSubtotal(product)
   })
 
   // ITERATION 3
   //... your code goes here
+  document.querySelector('#total-value span').innerText = totalPrice
 }
 
 // ITERATION 4
